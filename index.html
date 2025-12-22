@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projeto Create</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=VT323&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <h1>Projeto Create</h1>
+  </header>
+
+  <main>
+
+    <section class="card" data-machine="speedometer">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Speedometer.png" alt="">
+        <h1>Speedometer</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="mechanical-press">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Mechanical_Press.png" alt="">
+        <h1>Mechanical Press</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="mechanical-mixer">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Mechanical_Mixer.png" alt="">
+        <h1>Mechanical Mixer</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="encased-fan">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Encased_Fan.png" alt="">
+        <h1>Encased Fan</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="millstone">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Millstone.png" alt="">
+        <h1>Millstone</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="crushing-wheel">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Crushing_Wheel.png" alt="">
+        <h1>Crushing Wheel</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="deployer">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Deployer.png" alt="">
+        <h1>Deployer</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="cogwheel">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Cogwheel.png" alt="">
+        <h1>Cogwheel</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="mechanical-belt">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Mechanical_Belt.png" alt="">
+        <h1>Mechanical Belt</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="mechanical-crafter">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Mechanical_Crafter.png" alt="">
+        <h1>Mechanical Crafter</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="water-wheel">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Water_Wheel.png" alt="">
+        <h1>Water Wheel</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+
+    <section class="card" data-machine="steam-engine">
+      <img src="logo.png" alt="">
+      <div class="maquina">
+        <img src="Maquinas/Steam_Engine.png" alt="">
+        <h1>Steam Engine</h1>
+        <button class="btn-ver" type="button">Veja</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal genérico -->
+  <dialog id="modal-maquina" class="modal" data-machine="" data-page="1">
+    <section class="modal-box">
+      <header class="modal-header">
+        <h1 id="modal-titulo">Máquina</h1>
+        <button class="modal-close" type="button" aria-label="Fechar">×</button>
+      </header>
+
+      <!-- Aqui o JS vai injetar as páginas -->
+      <main class="pages" id="modal-pages"></main>
+
+      <footer class="modal-footer">
+        <button type="button" class="nav prev">‹</button>
+        <span class="indicator">1/1</span>
+        <button type="button" class="nav next">›</button>
+      </footer>
+    </section>
+  </dialog>
+
+  <footer></footer>
+</body>
+
+</html>
