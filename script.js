@@ -33,7 +33,7 @@ const MACHINES = {
     pages: [
       {
         id: "prod",
-        title: "Produção",
+        title: "Cálculo de Produção de Itens",
         fields: [
           { id: "rpm", label: "RPM", type: "number", placeholder: "Ex: 64" },
         ],
@@ -83,10 +83,10 @@ const MACHINES = {
       },
       {
         id: "stress",
-        title: "Stress",
+        title: "Cálculo do Impacto de Stress",
         fields: [
           { id: "rpm", label: "RPM", type: "number", placeholder: "Ex: 64" },
-          { id: "qtd", label: "Quantidade", type: "number", placeholder: "Ex: 4", min: 1, value: 1 },
+          { id: "qtd", label: "Quantidade de Presses", type: "number", placeholder: "Ex: 4", min: 1, value: 1 },
         ],
         outputId: "out-press-2",
         onSubmit: function () {
@@ -118,13 +118,6 @@ const MACHINES = {
             <div>
               <strong>Stress por Press</strong>
               <div>${stressPorPress.toLocaleString("pt-BR")} SU</div>
-            </div>
-
-            <hr style="margin:10px 0; opacity:.4;">
-
-            <div>
-              <strong>Configuração</strong>
-              <div>${qtd} Press${qtd > 1 ? "es" : ""}</div>
             </div>
 
             <hr style="margin:10px 0; opacity:.4;">
@@ -181,13 +174,6 @@ const MACHINES = {
             <div>
               <strong>Produção por Press</strong>
               <div>${itensPorMin.toFixed(1).toLocaleString("pt-BR")} itens / minuto</div>
-            </div>
-
-            <hr style="margin:10px 0; opacity:.4;">
-
-            <div>
-              <strong>Meta informada</strong>
-              <div>${meta.toLocaleString("pt-BR")} itens / minuto</div>
             </div>
 
             <hr style="margin:10px 0; opacity:.4;">
