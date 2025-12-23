@@ -12,21 +12,253 @@ const indicator = modal.querySelector('.indicator');
  * Depois você só adiciona "onSubmit" em cada página.
  */
 const MACHINES = {
-  "speedometer": {
-    title: "Speedometer",
-    pages: [
-      {
-        id: "read",
-        title: "Leitura",
-        description: "Mostra RPM/velocidade atual do eixo.",
-        fields: [
-          { id: "rpm", label: "RPM", type: "number", placeholder: "Ex: 64" },
-        ],
-        outputId: "out-speedometer-1",
-        onSubmit: null, // depois você coloca a função
-      },
-    ],
-  },
+  "Lcogwheel": {
+  title: "Large Cogwheel",
+  pages: [
+    {
+      id: "VelF",
+      title: "Velocidade Final (Diminuindo)",
+      fields: [
+        { id: "rpm_in_D", label: "RPM de entrada", type: "number", placeholder: "Ex: 64" },
+        { id: "Scog_D", label: "Cogwheel", type: "number", placeholder: "Ex: 2" },
+        { id: "Lcog_D", label: "Large Cogwheel", type: "number", placeholder: "Ex: 2" },
+      ],
+      outputId: "out-lcog-1",
+      onSubmit: function () {
+        const rpmEl = document.getElementById(
+          fieldId(MACHINES["Lcogwheel"], this, { id: "rpm_in_D" })
+        );
+        const sEl = document.getElementById(
+          fieldId(MACHINES["Lcogwheel"], this, { id: "Scog_D" })
+        );
+        const lEl = document.getElementById(
+          fieldId(MACHINES["Lcogwheel"], this, { id: "Lcog_D" })
+        );
+        const out = document.getElementById(this.outputId);
+
+        const rpmIn = Number(rpmEl?.value);
+        const sCog = Number(sEl?.value);
+        const lCog = Number(lEl?.value);
+
+        if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
+          out.innerHTML = `<strong>Digite um RPM de entrada válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(sCog) || sCog < 0 || !Number.isInteger(sCog)) {
+          out.innerHTML = `<strong>Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(lCog) || lCog < 0 || !Number.isInteger(lCog)) {
+          out.innerHTML = `<strong>Large Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
+          return;
+        }
+
+        if (sCog === 0 && lCog === 0) {
+          out.innerHTML = `<strong>Informe pelo menos 1 cogwheel (normal ou large).</strong>`;
+          return;
+        }
+
+        const pares = Math.min(sCog, lCog); // cada par (1 small + 1 large) reduz pela metade
+        const divisor = 2 ** pares;
+        const rpmFinal = rpmIn / divisor;
+
+        out.innerHTML = `
+          <div style="margin-top:8px; opacity:.9;">
+            RPM Final: ${rpmFinal}<br>
+            ⚠ Limite Máximo = 512 RPM
+          </div>
+        `;
+      }
+    },
+
+    {
+      id: "Cogs",
+      title: "Cogs necessárias (Diminuir)",
+      fields: [
+        { id: "rpm_in", label: "RPM inicial", type: "number", placeholder: "Ex: 64" },
+        { id: "rpm_target", label: "RPM desejada", type: "number", placeholder: "Ex: 16" },
+      ],
+      outputId: "out-lcog-2",
+      onSubmit: function () {
+        const rpmInEl = document.getElementById(
+          fieldId(MACHINES["Lcogwheel"], this, { id: "rpm_in" })
+        );
+        const rpmTargetEl = document.getElementById(
+          fieldId(MACHINES["Lcogwheel"], this, { id: "rpm_target" })
+        );
+        const out = document.getElementById(this.outputId);
+
+        const rpmIn = Number(rpmInEl?.value);
+        const rpmTarget = Number(rpmTargetEl?.value);
+
+        if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
+          out.innerHTML = `<strong>Digite um RPM inicial válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(rpmTarget) || rpmTarget <= 0) {
+          out.innerHTML = `<strong>Digite um RPM desejado válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isInteger(rpmIn) || !Number.isInteger(rpmTarget)) {
+          out.innerHTML = `<strong>Use valores inteiros de RPM (sem casas decimais).</strong>`;
+          return;
+        }
+
+        if (rpmTarget >= rpmIn) {
+          out.innerHTML = `
+            <div style="margin-top:8px; opacity:.9;">
+              Você não precisa diminuir ✅<br>
+              Pares mínimos: 0<br>
+              RPM Resultante: ${rpmIn}
+            </div>
+          `;
+          return;
+        }
+
+        const paresMinimos = Math.ceil(Math.log2(rpmIn / rpmTarget));
+        const resultado = Math.floor(rpmIn / (2 ** paresMinimos));
+
+        out.innerHTML = `
+          <div style="margin-top:8px; opacity:.9;">
+            Pares mínimos: ${paresMinimos}<br>
+            RPM Resultante: ${resultado}
+          </div>
+          <div style="margin-top:10px; font-size:.85rem; opacity:.7;">
+            Observação: a redução ocorre em potências de 2 (÷2, ÷4, ÷8...). Se não bater exato, você chega no mais próximo abaixo.
+          </div>
+        `;
+      }
+    },
+  ],
+},
+
+"cogwheel": {
+  title: "Cogwheel",
+  pages: [
+    {
+      id: "VelF",
+      title: "Velocidade Final (Aumentando)",
+      fields: [
+        { id: "rpm_in", label: "RPM de entrada", type: "number", placeholder: "Ex: 64" },
+        { id: "Scog", label: "Cogwheel", type: "number", placeholder: "Ex: 2" },
+        { id: "Lcog", label: "Large Cogwheel", type: "number", placeholder: "Ex: 2" },
+      ],
+      outputId: "out-cog-1",
+      onSubmit: function () {
+        const rpmEl = document.getElementById(
+          fieldId(MACHINES["cogwheel"], this, { id: "rpm_in" })
+        );
+        const sEl = document.getElementById(
+          fieldId(MACHINES["cogwheel"], this, { id: "Scog" })
+        );
+        const lEl = document.getElementById(
+          fieldId(MACHINES["cogwheel"], this, { id: "Lcog" })
+        );
+        const out = document.getElementById(this.outputId);
+
+        const rpmIn = Number(rpmEl?.value);
+        const sCog = Number(sEl?.value);
+        const lCog = Number(lEl?.value);
+
+        if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
+          out.innerHTML = `<strong>Digite um RPM de entrada válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(sCog) || sCog < 0 || !Number.isInteger(sCog)) {
+          out.innerHTML = `<strong>Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(lCog) || lCog < 0 || !Number.isInteger(lCog)) {
+          out.innerHTML = `<strong>Large Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
+          return;
+        }
+
+        if (sCog === 0 && lCog === 0) {
+          out.innerHTML = `<strong>Informe pelo menos 1 cogwheel (normal ou large).</strong>`;
+          return;
+        }
+
+        const pares = Math.min(sCog, lCog);
+        const multiplicador = 2 ** pares;
+        const rpmFinal = rpmIn * multiplicador;
+
+        out.innerHTML = `
+          <div style="margin-top:8px; opacity:.9;">
+            RPM Final: ${rpmFinal}<br>
+            ⚠ Limite Máximo = 512 RPM
+          </div>
+        `;
+      }
+    },
+
+    {
+      id: "Cogs",
+      title: "Cogs necessárias (Aumentar)",
+      fields: [
+        { id: "rpm_in", label: "RPM inicial", type: "number", placeholder: "Ex: 64" },
+        { id: "rpm_target", label: "RPM desejada", type: "number", placeholder: "Ex: 256" },
+      ],
+      outputId: "out-cog-2",
+      onSubmit: function () {
+        const rpmInEl = document.getElementById(
+          fieldId(MACHINES["cogwheel"], this, { id: "rpm_in" })
+        );
+        const rpmTargetEl = document.getElementById(
+          fieldId(MACHINES["cogwheel"], this, { id: "rpm_target" })
+        );
+        const out = document.getElementById(this.outputId);
+
+        const rpmIn = Number(rpmInEl?.value);
+        const rpmTarget = Number(rpmTargetEl?.value);
+
+        if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
+          out.innerHTML = `<strong>Digite um RPM inicial válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isFinite(rpmTarget) || rpmTarget <= 0) {
+          out.innerHTML = `<strong>Digite um RPM desejado válido (maior que 0).</strong>`;
+          return;
+        }
+
+        if (!Number.isInteger(rpmIn) || !Number.isInteger(rpmTarget)) {
+          out.innerHTML = `<strong>Use valores inteiros de RPM (sem casas decimais).</strong>`;
+          return;
+        }
+
+        if (rpmTarget <= rpmIn) {
+          out.innerHTML = `
+            <div style="margin-top:8px; opacity:.9;">
+              Você não precisa aumentar ✅<br>
+              Pares mínimos: 0<br>
+              RPM Resultante: ${rpmIn}
+            </div>
+          `;
+          return;
+        }
+
+        const paresMinimos = Math.ceil(Math.log2(rpmTarget / rpmIn));
+        const resultado = rpmIn * (2 ** paresMinimos);
+
+        out.innerHTML = `
+          <div style="margin-top:8px; opacity:.9;">
+            Pares mínimos: ${paresMinimos}<br>
+            RPM Resultante: ${resultado}
+          </div>
+          <div style="margin-top:10px; font-size:.85rem; opacity:.7;">
+            Observação: o aumento ocorre em potências de 2 (×2, ×4, ×8...). Se não bater exato, você chega no mais próximo acima.
+          </div>
+        `;
+      }
+    },
+  ],
+},
 
   "mechanical-press": {
     title: "Mechanical Press",
@@ -133,7 +365,7 @@ const MACHINES = {
       },
       {
         id: "meta",
-        title: "Meta",
+        title: "Cálculo de Presses Necessárias",
         fields: [
           { id: "rpm", label: "RPM", type: "number", placeholder: "Ex: 128" },
           { id: "meta", label: "Meta (itens/min)", type: "number", placeholder: "Ex: 1000" },
@@ -219,142 +451,6 @@ const MACHINES = {
         outputId: "out-crafter-2",
         onSubmit: null,
       },
-    ],
-  },
-
-  "cogwheel": {
-    title: "Cogwheel",
-    pages: [
-      {
-        id: "VelF",
-        title: "Relação / Velocidade Final",
-        fields: [
-          { id: "rpm_in", label: "RPM de entrada", type: "number", placeholder: "Ex: 64" },
-          { id: "Scog", label: "Cogwheel", type: "number", placeholder: "Ex: 2" },
-          { id: "Lcog", label: "Large Cogwheel", type: "number", placeholder: "Ex: 2" },
-        ],
-        outputId: "out-cog-1",
-        onSubmit: function () {
-          // pega elementos
-          const rpmEl = document.getElementById(
-            fieldId(MACHINES["cogwheel"], this, { id: "rpm_in" })
-          );
-          const sEl = document.getElementById(
-            fieldId(MACHINES["cogwheel"], this, { id: "Scog" })
-          );
-          const lEl = document.getElementById(
-            fieldId(MACHINES["cogwheel"], this, { id: "Lcog" })
-          );
-          const out = document.getElementById(this.outputId);
-
-          // lê valores
-          const rpmIn = Number(rpmEl?.value);
-          const sCog = Number(sEl?.value);
-          const lCog = Number(lEl?.value);
-
-          // validações: RPM
-          if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
-            out.innerHTML = `<strong>Digite um RPM de entrada válido (maior que 0).</strong>`;
-            return;
-          }
-
-          // validações: quantidades
-          if (!Number.isFinite(sCog) || sCog < 0 || !Number.isInteger(sCog)) {
-            out.innerHTML = `<strong>Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
-            return;
-          }
-
-          if (!Number.isFinite(lCog) || lCog < 0 || !Number.isInteger(lCog)) {
-            out.innerHTML = `<strong>Large Cogwheel precisa ser um número inteiro (0 ou maior).</strong>`;
-            return;
-          }
-
-          // validação: não pode ser tudo zero
-          if (sCog === 0 && lCog === 0) {
-            out.innerHTML = `<strong>Informe pelo menos 1 cogwheel (normal ou large).</strong>`;
-            return;
-          }
-          const pares = Math.min(sCog, lCog)
-          const multiplicador = Math.pow(2, pares)
-          const rpmFinal = rpmIn * multiplicador
-          
-          out.innerHTML = `
-                            <div style="margin-top:8px; opacity:.9;">
-                              RPM Final: ${rpmFinal}<br>
-                              ⚠ Límite Máximo = 512 RPM
-                            </div>
-                          `;
-        }
-
-      },
-      {
-        id: "Cogs",
-        title: "Relação / Cogs necessárias",
-        fields: [
-          { id: "rpm_in", label: "RPM inicial", type: "number", placeholder: "Ex: 64" },
-          { id: "Scog", label: "RPM Desejada", type: "number", placeholder: "Ex: 256" },
-        ],
-        outputId: "out-cog-2",
-        onSubmit: function () {
-          const rpmInEl = document.getElementById(
-            fieldId(MACHINES["cogwheel"], this, { id: "rpm_in" })
-          );
-          const rpmTargetEl = document.getElementById(
-            fieldId(MACHINES["cogwheel"], this, { id: "Scog" }) // (melhor seria "rpm_target")
-          );
-          const out = document.getElementById(this.outputId);
-
-          const rpmIn = Number(rpmInEl?.value);
-          const rpmTarget = Number(rpmTargetEl?.value);
-
-          // ===== validações: RPM inicial =====
-          if (!Number.isFinite(rpmIn) || rpmIn <= 0) {
-            out.innerHTML = `<strong>Digite um RPM inicial válido (maior que 0).</strong>`;
-            return;
-          }
-
-          // ===== validações: RPM desejada =====
-          if (!Number.isFinite(rpmTarget) || rpmTarget <= 0) {
-            out.innerHTML = `<strong>Digite um RPM desejado válido (maior que 0).</strong>`;
-            return;
-          }
-
-          // (opcional, mas recomendado) - só aceitar inteiros
-          if (!Number.isInteger(rpmIn) || !Number.isInteger(rpmTarget)) {
-            out.innerHTML = `<strong>Use valores inteiros de RPM (sem casas decimais).</strong>`;
-            return;
-          }
-
-          // ===== validação lógica: precisa aumentar ou reduzir? =====
-          if (rpmTarget === rpmIn) {
-            out.innerHTML = `
-                              <div><strong>Você já está no RPM desejado ✅</strong></div>
-                              <div style="margin-top:8px; opacity:.9;">
-                                RPM inicial: ${rpmIn.toLocaleString("pt-BR")}<br>
-                                RPM desejado: ${rpmTarget.toLocaleString("pt-BR")}
-                              </div>
-                              <div style="margin-top:10px; font-size:.85rem; opacity:.7;">
-                                Resultado: nenhuma relação de engrenagens necessária (multiplicador 1x).
-                              </div>
-                            `;
-            return;
-          }
-
-          const pares = Math.log2(rpmTarget/rpmIn)
-          out.innerHTML = `
-                            <div style="margin-top:8px; opacity:.9;">
-                              Pares de cogs necessários: ${pares}
-                            </div>
-                            <div style="margin-top:10px; font-size:.85rem; opacity:.7;">
-                              Próximo passo: calcular quantos pares (1 cog + 1 large) você precisa para chegar no RPM desejado.
-                            </div>
-                          `;
-        }
-
-
-      }
-
-      ,
     ],
   },
 
