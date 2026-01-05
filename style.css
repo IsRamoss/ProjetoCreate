@@ -231,6 +231,20 @@ dialog#modal-maquina::backdrop {
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
+.page select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: #fff8ef;
+  color: var(--line);
+  outline: none;
+  box-shadow: 0 3px 0 rgba(43, 27, 18, 0.35);
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-weight: 600;
+}
+
+
 .page input:focus {
   transform: translateY(-1px);
   box-shadow: 0 5px 0 rgba(43, 27, 18, 0.45);
